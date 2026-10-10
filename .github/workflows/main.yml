@@ -1,0 +1,20 @@
+name: build
+on: [push, workflow_dispatch]
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          java-version: '25'
+          distribution: 'microsoft'
+      - run: unzip -q ./*.zip
+      - run: chmod +x galaxy-fabric/gradlew
+      - run: ./gradlew build --stacktrace
+        working-directory: galaxy-fabric
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: galaxy-rift-jar
+          path: galaxy-fabric/build/libs/
